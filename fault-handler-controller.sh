@@ -20,9 +20,6 @@ case "$1" in
     ghost)
         "$BASE_DIR/ghost-process-cleanup.sh" >> "$LOG_DIR/ghost-process.log" 2>&1
         ;;
-    token)
-        "$BASE_DIR/token-monitor.sh" >> "$LOG_DIR/token-monitor.log" 2>&1
-        ;;
     network)
         "$BASE_DIR/network-failover.sh" >> "$LOG_DIR/network.log" 2>&1
         ;;
@@ -36,16 +33,13 @@ case "$1" in
         echo "1. 幽灵进程清理:"
         tail -5 "$LOG_DIR/ghost-process.log" 2>/dev/null || echo "  暂无日志"
         echo ""
-        echo "2. Token 监控:"
-        tail -5 "$LOG_DIR/token-monitor.log" 2>/dev/null || echo "  暂无日志"
-        echo ""
-        echo "3. 网络故障转移:"
+        echo "2. 网络故障转移:"
         tail -5 "$LOG_DIR/network.log" 2>/dev/null || echo "  暂无日志"
         echo ""
-        echo "4. 高风险审计日志:"
+        echo "3. 高风险审计日志:"
         tail -5 "$LOG_DIR/audit-critical.log" 2>/dev/null || echo "  暂无日志"
         echo ""
-        echo "5. 运行中的处理器:"
+        echo "4. 运行中的处理器:"
         pgrep -f "fault-handler" | wc -l | xargs echo "  进程数:"
         ;;
     install)
@@ -53,12 +47,12 @@ case "$1" in
         crontab -l > "$HOME/.crontab.backup.$(date +%Y%m%d)" 2>/dev/null || true
         (
             crontab -l 2>/dev/null | grep -v "fault-handler-controller.sh" | grep -v "# Thunder 故障处理器"
-            echo "# Thunder 故障处理器（每5分钟）"
+            echo "# Thunder 故障处理器 - 幽灵进程清理（每5分钟）"
             echo "*/5 * * * * $BASE_DIR/fault-handler-controller.sh ghost >> $LOG_DIR/cron.log 2>&1"
-            echo "# Thunder Token 监控（每小时）"
-            echo "0 * * * * $BASE_DIR/fault-handler-controller.sh token >> $LOG_DIR/cron.log 2>&1"
-            echo "# Thunder 网络检测（每分钟）"
-            echo "* * * * * $BASE_DIR/fault-handler-controller.sh network >> $LOG_DIR/cron.log 2>&1"
+            echo "# Thunder 网络检测（每5分钟）"
+            echo "*/5 * * * * $BASE_DIR/fault-handler-controller.sh network >> $LOG_DIR/cron.log 2>&1"
+            echo "# Thunder Token 监控（每6小时）"
+            echo "0 */6 * * * $BASE_DIR/token-monitor.sh --alert >> ~/.openclaw/logs/token-monitor.log 2>&1"
         ) | crontab -
         echo "✅ 已安装到 crontab"
         echo ""
@@ -74,10 +68,11 @@ case "$1" in
         echo ""
         echo "用法:"
         echo "  ./fault-handler-controller.sh ghost     # 执行幽灵进程清理"
-        echo "  ./fault-handler-controller.sh token     # 执行 Token 监控"
         echo "  ./fault-handler-controller.sh network   # 执行网络检测"
         echo "  ./fault-handler-controller.sh status    # 查看状态"
         echo "  ./fault-handler-controller.sh install   # 安装到 crontab"
         echo "  ./fault-handler-controller.sh uninstall # 从 crontab 移除"
+        echo ""
+        echo "注意: Token 监控已独立为 token-monitor.sh（每6小时）"
         ;;
 esac

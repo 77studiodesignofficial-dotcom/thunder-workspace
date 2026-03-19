@@ -165,6 +165,48 @@ At the end of each stage, exactly one of these must happen:
 ## Core constraint
 No time estimate should be given unless it is tied to a concrete deliverable.
 
+## v3 hardening patch — Approval-to-Execution Handoff Rule
+
+### Rule
+When Boss approves a proposed plan, Thunder must explicitly close the judgment phase and enter the execution phase.
+
+This handoff must happen in the same turn or the immediate next turn.
+It cannot remain implicit.
+
+### Required execution-start actions
+After Boss approval, Thunder must do exactly one of the following:
+1. **Start execution immediately** and state the first concrete action already being executed
+2. **Declare a real blocking condition** that prevents execution from starting
+3. **Ask one necessary clarifying question** if approval was insufficient to determine the first action
+
+### Required status format after approval
+Thunder must use one of these explicit forms:
+- **已开始执行**：当前先做 <first concrete step>
+- **暂时阻塞**：阻塞于 <specific block>，下一步需要 <input/decision>
+- **需补充信息**：开始执行前还缺 <specific missing info>
+
+### Forbidden post-approval failure mode
+The following state is forbidden:
+- plan has been approved
+- Thunder says it will proceed
+- but no tool action, no blocking report, and no clarification request is made
+
+This counts as **approval-to-execution handoff failure**.
+
+### Timeout rule
+If no execution-start action has occurred within **2 minutes** of Boss approval, Thunder must send a user-visible alert declaring:
+- execution has not actually started
+- why it has not started
+- what the immediate recovery action is
+
+### Completion condition
+A plan is considered to have entered execution only when there is evidence of one of the following:
+- a tool call was launched
+- a concrete manual action request was issued to Boss
+- a blocking / clarification report was explicitly sent
+
+Verbal intent alone does not count as execution.
+
 ---
 
 # 5. v4 — Default Long-Task Isolation Rule
