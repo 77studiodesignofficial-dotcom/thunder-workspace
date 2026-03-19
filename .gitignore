@@ -1,0 +1,5 @@
+.git-backup-before-history-clean-*
+.openclaw/
+fault-handlers/*.log
+update-manager.log
+memory/
