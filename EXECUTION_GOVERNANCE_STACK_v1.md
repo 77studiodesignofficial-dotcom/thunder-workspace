@@ -431,3 +431,68 @@ From this file onward, the default operating posture is:
 
 ## Final one-line policy
 > **Main session for control, isolation for heavy work, staged commitments for active work, immediate alerts on overrun, proactive reporting on waiting/blocking.**
+
+---
+
+# 13. Post-Adoption Hardening Rules (Added 2026-03-16)
+
+The following rules were added based on observed failures during 2026-03-16 execution.
+
+## 13.1 Gateway Operation Reporting Rule (Mandatory)
+
+### Trigger
+Any Gateway operation that results in a restart: `config.patch`, `config.apply`, `restart`.
+
+### Required Action (within 3 seconds of completion)
+1. Check operation result (success/failure)
+2. If success: immediately report "配置已生效，Gateway 已重启"
+3. Report current task completion status
+4. Provide next-step recommendation or waiting-state notice
+
+### Prohibition
+**NEVER** wait for user inquiry before reporting Gateway operation results.
+
+### Rationale
+Gateway restart is a configuration checkpoint, not a task pause. The user needs immediate confirmation that their change has taken effect.
+
+### Observed Failure (2026-03-16)
+- OPENAI_API_KEY configuration: reported only after user inquiry
+- GEMINI_API_KEY configuration: reported only after user inquiry  
+- GEMINI_API_KEY update: reported only after user inquiry
+
+---
+
+## 13.2 Capability Conflict Check Rule (Mandatory)
+
+### Trigger
+User requests a specific capability (tool, API, integration).
+
+### Required Action (before execution)
+1. Check current session/config for existing equivalent or superior capabilities
+2. Compare user's request against existing capabilities
+3. If equivalent/superior capability exists:
+   - Report the existing capability
+   - Ask: "已有 [capability]，是否仍需 [requested]？"
+   - Wait for explicit confirmation before proceeding
+4. If no conflict exists: proceed with standard capability-setup flow
+
+### Prohibition
+**NEVER** blindly execute a capability request without checking for conflicts or superior alternatives.
+
+### Rationale
+Prevents redundant work and surface-level solutions when better alternatives are already configured.
+
+### Observed Failure (2026-03-16)
+- User requested Claude CLI resolution
+- Failed to check that Codex (openai-codex/gpt-5.4) was already the primary model
+- Wasted 20+ minutes on Claude CLI troubleshooting before discovering Codex was already operational
+
+---
+
+## 13.3 Rule Violation Escalation
+
+If any of the above rules are violated:
+1. Immediate self-correction in the same session
+2. Record violation in `memory/YYYY-MM-DD.md`
+3. Report violation to Boss with root-cause and prevention measure
+4. If repeated violation occurs, escalate to `EXECUTION_COMPLIANCE_CHECKLIST_v1.md` for formal audit

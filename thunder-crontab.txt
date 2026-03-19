@@ -1,0 +1,23 @@
+# Thunder 完整运维 Crontab 配置
+# 安装方法: crontab -e，然后粘贴以下内容
+
+# Thunder 故障处理器
+*/5 * * * * $HOME/.openclaw/workspace/fault-handler-controller.sh ghost
+0 * * * * $HOME/.openclaw/workspace/fault-handler-controller.sh token
+* * * * * $HOME/.openclaw/workspace/fault-handler-controller.sh network
+
+# Thunder 日报（优化版）- 每天 9:00
+0 9 * * * $HOME/.openclaw/workspace/optimized-daily-briefing.sh
+
+# Thunder 周报 - 每周日 20:00
+0 20 * * 0 $HOME/.openclaw/workspace/weekly-report.sh
+
+# Thunder 日结 - 工作日 18:00
+0 18 * * 1-5 echo "日结任务已激活，实际执行通过 Telegram Bot 触发"
+
+# 备注：
+# - ghost: 幽灵进程清理（每5分钟）
+# - token: Token 监控（每小时）
+# - network: 网络检测（每分钟）
+# - optimized-daily-briefing: 优化版日报（每天9:00）
+# - weekly-report: 周报（每周日20:00）

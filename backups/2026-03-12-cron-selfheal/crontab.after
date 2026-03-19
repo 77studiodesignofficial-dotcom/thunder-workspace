@@ -1,0 +1,22 @@
+# ============================================
+# Thunder 运维系统定时任务
+# 安装时间: $(date)
+# ============================================
+
+# 故障处理器 - 幽灵进程清理（每5分钟）
+
+# 故障处理器 - Token监控（每小时）
+
+# 故障处理器 - 网络检测（每分钟）
+
+# 优化版日报（每天9:00）
+
+# 周报（每周日20:00）
+
+# ============================================
+# Thunder 故障处理器（每5分钟）
+*/5 * * * * /Users/titen/.openclaw/workspace/fault-handler-controller.sh ghost >> /Users/titen/.openclaw/fault-handlers/cron.log 2>&1
+# Thunder Token 监控（每小时）
+0 * * * * /Users/titen/.openclaw/workspace/fault-handler-controller.sh token >> /Users/titen/.openclaw/fault-handlers/cron.log 2>&1
+# Thunder 网络检测（每分钟）
+* * * * * /Users/titen/.openclaw/workspace/fault-handler-controller.sh network >> /Users/titen/.openclaw/fault-handlers/cron.log 2>&1

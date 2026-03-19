@@ -1,0 +1,82 @@
+--- jobs.before.json
++++ jobs.after.json
+@@ -11,7 +11,7 @@
+       "schedule": {
+         "kind": "cron",
+         "expr": "0 8 * * *",
+-        "tz": "Asia/Shanghai"
++        "tz": "US/Pacific"
+       },
+       "sessionTarget": "isolated",
+       "wakeMode": "now",
+@@ -35,13 +35,13 @@
+       "schedule": {
+         "kind": "cron",
+         "expr": "0 18 * * 1-5",
+-        "tz": "Asia/Shanghai"
++        "tz": "US/Pacific"
+       },
+       "sessionTarget": "isolated",
+       "wakeMode": "now",
+       "payload": {
+         "kind": "agentTurn",
+-        "message": "执行工作日本地轻量日结：\\n\\n1. 检查今日工作区关键文件变更\\n2. 检查 MEMORY.md / 今日记录中的未完成事项\\n3. 检查是否存在需要 Boss 明日跟进的事项\\n4. 用简洁格式发送：\\n\\n📘 今日日结 - {日期}\\n- 今日关键进展：{1-3 条}\\n- 未完成事项：{1-3 条}\\n- 明日提醒：{1-3 条}\\n\\n要求：只基于本地工作区和内部文件，不做外部搜索；控制篇幅，保持简洁。",
++        "message": "执行工作日本地轻量日结：\\n\\n1. 检查今日工作区关键文件变更\\n2. 检查 MEMORY.md / 今日记录中的未完成事项\\n3. 检查是否存在需要 Boss 明日跟进的事项\\n4. 用简洁格式发送：\\n\\n📘 今日日结 - {日期}\\n- 今日关键进展：{1-3 条}\\n- 未完成事项：{1-3 条}\\n- 明日提醒：{1-3 条}\\n\\n要求：只基于本地工作区和内部文件，不做外部搜索；控制篇幅，保持简洁。\n\n发送幂等要求（必须遵守）：\n- 发送前计算 message_key = job_name + business_date + channel + to\n- job_name 使用当前 job 的 name；business_date 使用 US/Pacific 业务日期（YYYY-MM-DD）；channel 与 to 使用当前 delivery 配置\n- 先检查 ~/.openclaw/cron/send-idempotency.log；若已存在相同 message_key 且 result=sent，则跳过发送\n- 无论发送还是跳过，都写一条日志到 ~/.openclaw/cron/send-idempotency.log，字段至少包含 ts、message_key、job_name、business_date、channel、to、result\n- 若命中重复，输出 NO_REPLY，不再重复发送\n- 禁止使用 curl/Bot 直发；业务消息只能走 OpenClaw 内建 cron delivery",
+         "model": "openai/gpt-4o-mini",
+         "timeoutSeconds": 120
+       },
+@@ -71,13 +71,13 @@
+       "schedule": {
+         "kind": "cron",
+         "expr": "0 20 * * 0",
+-        "tz": "Asia/Shanghai"
++        "tz": "US/Pacific"
+       },
+       "sessionTarget": "isolated",
+       "wakeMode": "now",
+       "payload": {
+         "kind": "agentTurn",
+-        "message": "执行每周本地轻量周报：\\n\\n1. 检查本周工作区关键文件/脚本/文档变化\\n2. 检查 MEMORY.md 与本周记录中的关键决策或未完成事项\\n3. 总结本周最重要的 3-5 个进展\\n4. 提炼下周需要 Boss 决策或跟进的事项\\n5. 用简洁格式发送：\\n\\n📙 本周周报 - {日期范围}\\n- 本周关键进展：{3-5 条}\\n- 未完成/待跟进：{1-3 条}\\n- 下周建议：{1-3 条}\\n\\n要求：只基于本地工作区与内部记录，不做外部行业调研；保持简洁，避免长文。",
++        "message": "执行每周本地轻量周报：\\n\\n1. 检查本周工作区关键文件/脚本/文档变化\\n2. 检查 MEMORY.md 与本周记录中的关键决策或未完成事项\\n3. 总结本周最重要的 3-5 个进展\\n4. 提炼下周需要 Boss 决策或跟进的事项\\n5. 用简洁格式发送：\\n\\n📙 本周周报 - {日期范围}\\n- 本周关键进展：{3-5 条}\\n- 未完成/待跟进：{1-3 条}\\n- 下周建议：{1-3 条}\\n\\n要求：只基于本地工作区与内部记录，不做外部行业调研；保持简洁，避免长文。\n\n发送幂等要求（必须遵守）：\n- 发送前计算 message_key = job_name + business_date + channel + to\n- job_name 使用当前 job 的 name；business_date 使用 US/Pacific 业务日期（YYYY-MM-DD）；channel 与 to 使用当前 delivery 配置\n- 先检查 ~/.openclaw/cron/send-idempotency.log；若已存在相同 message_key 且 result=sent，则跳过发送\n- 无论发送还是跳过，都写一条日志到 ~/.openclaw/cron/send-idempotency.log，字段至少包含 ts、message_key、job_name、business_date、channel、to、result\n- 若命中重复，输出 NO_REPLY，不再重复发送\n- 禁止使用 curl/Bot 直发；业务消息只能走 OpenClaw 内建 cron delivery",
+         "model": "openai/gpt-4o-mini",
+         "timeoutSeconds": 120
+       },
+@@ -107,7 +107,7 @@
+       "schedule": {
+         "kind": "cron",
+         "expr": "0 9 * * *",
+-        "tz": "Asia/Shanghai"
++        "tz": "US/Pacific"
+       },
+       "sessionTarget": "isolated",
+       "wakeMode": "now",
+@@ -131,13 +131,13 @@
+       "schedule": {
+         "kind": "cron",
+         "expr": "0 9 * * *",
+-        "tz": "Asia/Shanghai"
++        "tz": "US/Pacific"
+       },
+       "sessionTarget": "isolated",
+       "wakeMode": "now",
+       "payload": {
+         "kind": "agentTurn",
+-        "message": "执行每日本地晨报任务（轻量版）：\\n\\n1. 检查 ~/workspace/ 昨日文件变更\\n2. 检查 MEMORY.md 中未完成待办（grep '\\''\\\\[ \\\\]'\\''）\\n3. 检查 HEARTBEAT.md 是否有周期性任务\\n4. 检查当前等待 Boss 输入/确认的事项\\n5. 用简洁格式发送：\\n\\n📅 每日本地晨报 - {日期}\\n\\n📁 工作区状态\\n- 昨日变更：{简要列表}\\n- 待办提醒：{未完成项}\\n- 等待输入：{需 Boss 处理的事项}\\n- HEARTBEAT：{状态}\\n\\n💡 今日建议\\n- {1-3 条简洁建议}\\n\\n要求：只做本地状态与内部文件检查，不进行外部网页搜索；控制篇幅，2-6 条要点即可。",
++        "message": "执行每日本地晨报任务（轻量版）：\\n\\n1. 检查 ~/workspace/ 昨日文件变更\\n2. 检查 MEMORY.md 中未完成待办（grep '\\''\\\\[ \\\\]'\\''）\\n3. 检查 HEARTBEAT.md 是否有周期性任务\\n4. 检查当前等待 Boss 输入/确认的事项\\n5. 用简洁格式发送：\\n\\n📅 每日本地晨报 - {日期}\\n\\n📁 工作区状态\\n- 昨日变更：{简要列表}\\n- 待办提醒：{未完成项}\\n- 等待输入：{需 Boss 处理的事项}\\n- HEARTBEAT：{状态}\\n\\n💡 今日建议\\n- {1-3 条简洁建议}\\n\\n要求：只做本地状态与内部文件检查，不进行外部网页搜索；控制篇幅，2-6 条要点即可。\n\n发送幂等要求（必须遵守）：\n- 发送前计算 message_key = job_name + business_date + channel + to\n- job_name 使用当前 job 的 name；business_date 使用 US/Pacific 业务日期（YYYY-MM-DD）；channel 与 to 使用当前 delivery 配置\n- 先检查 ~/.openclaw/cron/send-idempotency.log；若已存在相同 message_key 且 result=sent，则跳过发送\n- 无论发送还是跳过，都写一条日志到 ~/.openclaw/cron/send-idempotency.log，字段至少包含 ts、message_key、job_name、business_date、channel、to、result\n- 若命中重复，输出 NO_REPLY，不再重复发送\n- 禁止使用 curl/Bot 直发；业务消息只能走 OpenClaw 内建 cron delivery",
+         "model": "openai/gpt-4o-mini",
+         "timeoutSeconds": 120
+       },
+@@ -168,7 +168,7 @@
+       "schedule": {
+         "kind": "cron",
+         "expr": "15 9 * * *",
+-        "tz": "Asia/Shanghai"
++        "tz": "US/Pacific"
+       },
+       "sessionTarget": "isolated",
+       "wakeMode": "now",
+@@ -187,4 +187,4 @@
+       "description": "已禁用：行业调研从 cron 主链路移除，改为按需触发"
+     }
+   ]
+-}+}
